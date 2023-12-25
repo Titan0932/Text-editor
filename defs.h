@@ -21,11 +21,25 @@
 #define CLEAN_LINE "\x1b[K"
 
 struct editorConfig {
+    int cx, cy;                         // tracks cursor position 
     int screenrows;
     int screencols;
     struct termios orig_termios;          // stores terminal state
 };
 struct editorConfig E;
+
+enum editorKey {
+  ARROW_LEFT = 1000,
+  ARROW_RIGHT,
+  ARROW_UP,
+  ARROW_DOWN,
+  PAGE_UP,
+  PAGE_DOWN,
+  HOME,
+  END,
+  DELETE
+};
+
 
 // append buffer //
 struct abuf {
@@ -40,9 +54,12 @@ void die(const char *s);
 void disableRawMode();
 void enableRawMode();
 
-char editorReadKey();
+/* input */
+int editorReadKey();
 void editorProcessKeypress();
+void editorMoveCursor(int key);
 
+/* output */
 void editorDrawRows(struct abuf *ab);
 void editorRefreshScreen();
 void clearScreen();
@@ -51,6 +68,7 @@ void repositionCursor();
 int getWindowSize(int *rows, int *cols);
 void initEditor();
 
+/* Append buffer*/
 void abAppend(struct abuf *ab, const char *s, int len);
 void abFree(struct abuf *ab);
 
